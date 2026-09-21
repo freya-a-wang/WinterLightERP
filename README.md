@@ -9,7 +9,15 @@ pnpm install
 pnpm dev
 ```
 
-开发时接口前缀默认是 `/api`，由 Vite 代理到 `VITE_DEV_PROXY_TARGET`（默认 `http://127.0.0.1:8080`）。可复制 `.env.example` 为 `.env.local` 覆盖本地配置。
+开发、测试、生产各用一份 Vite mode 文件：
+
+| 文件 | 命令 | mode |
+|------|------|------|
+| `.env.development` | `pnpm dev` | development |
+| `.env.test` | `pnpm build:test` | test |
+| `.env.production` | `pnpm build` | production |
+
+本机密钥或临时覆盖用 `.env.local` / `.env.*.local`（已 gitignore）。开发时代理目标来自 `VITE_DEV_PROXY_TARGET`（默认 `http://127.0.0.1:8080`）。
 
 其它命令：
 
@@ -37,11 +45,11 @@ pnpm build
 src/
   app/                 根组件与路由
   layouts/             管理端壳层
-  features/            业务模块（dashboard / sales / inventory / finance / system）
+  features/            按路由目录：dashboard / sales / inventory / finance / system / login
   components/          跨模块共享 UI
-  lib/                 queryClient、dayjs、appMessage
-  stores/              Zustand 会话
-  api/                 HTTP 与 ApiError
+  lib/                 queryClient、queryKeys、dayjs、appMessage
+  stores/              跨页会话（sessionStore）
+  api/                 通用 HTTP 与 ApiError（业务接口放 features/<路由>/api/）
   styles/              全局 token
 ```
 

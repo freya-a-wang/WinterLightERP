@@ -54,8 +54,10 @@ FeatureName/
 - 文件夹名 = 组件名（PascalCase），入口固定 `index.tsx`，样式固定 `index.module.less`
 - **禁止** 与文件夹同名的 `HomePage.tsx` 与 `HomePage/index.tsx` 并存
 - 跨 feature 共享 UI → `src/components/`
+- feature 目录与路由 path 对齐（`/sales` → `features/sales/`），见 `.cursor/rules/feature-route-alignment.mdc`
 - feature 内私有组件 → `features/<feature>/components/`
 - hooks → `features/<feature>/hooks/` 或 `src/hooks/`（跨 feature 时）
+- 该模块接口 → `features/<feature>/api/`
 - 纯函数 / 常量 → `lib/`、`constants.ts`、`types.ts`
 
 ### 导入
@@ -100,9 +102,11 @@ FeatureName/
 
 落点：
 
-- 跨 API：`api/`
-- 跨 feature：`lib/`
-- feature 内：`features/<feature>/lib/`、`constants.ts`
+- 通用 HTTP 客户端：`src/api/`（`httpRequest`、`ApiError`）
+- 某路由模块的接口：`features/<route>/api/`
+- 跨 feature 纯函数：`lib/`
+- 跨页会话：`src/stores/`
+- feature 内工具：`features/<feature>/lib/`、`constants.ts`
 
 ---
 

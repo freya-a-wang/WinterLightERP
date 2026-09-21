@@ -16,9 +16,9 @@ alwaysApply: false
 
 ## 项目约定
 
-- `queryKey` 集中在 `src/lib/queryKeys.ts`，新增 key 写在这里。
+- `queryKey` 集中在 `src/lib/queryKeys.ts`，**顶层 key 与路由目录同名**（`queryKeys.sales`）。
 - 默认客户端：`src/lib/queryClient.ts`（`retry: 1`，`refetchOnWindowFocus: false`）。
-- 成功后刷新列表：`queryClient.invalidateQueries({ queryKey: queryKeys.xxx })`。
+- 成功后刷新列表：`queryClient.invalidateQueries({ queryKey: queryKeys.sales })`。
 
 ## 体验要求
 
@@ -32,7 +32,7 @@ alwaysApply: false
 ```tsx
 export function useSalesOrderListQuery(keyword: string) {
   return useQuery({
-    queryKey: [...queryKeys.salesOrders, keyword.trim()],
+    queryKey: [...queryKeys.sales, keyword.trim()],
     queryFn: () => fetchSalesOrders(keyword.trim())
   })
 }
@@ -40,7 +40,7 @@ export function useSalesOrderListQuery(keyword: string) {
 const mutation = useMutation({
   mutationFn: createSalesOrder,
   onSuccess: () => {
-    void queryClient.invalidateQueries({ queryKey: queryKeys.salesOrders })
+    void queryClient.invalidateQueries({ queryKey: queryKeys.sales })
     appMessage.success(feedbackMessages.common.saveSuccess)
   }
 })

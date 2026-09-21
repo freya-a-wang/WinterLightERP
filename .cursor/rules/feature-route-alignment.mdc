@@ -1,0 +1,48 @@
+---
+description: 业务目录与路由 path 对齐，便于按模块查找 api / store / 页面
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# 目录与路由对齐
+
+业务文件按 **路由 path 第一段** 分目录，查找时：路由 `/sales` → `src/features/sales/`。
+
+| 路由 | feature 目录 |
+|------|----------------|
+| `/` | `features/dashboard/` |
+| `/sales` | `features/sales/` |
+| `/inventory` | `features/inventory/` |
+| `/finance` | `features/finance/` |
+| `/system` | `features/system/` |
+| `/login` | `features/login/` |
+| `/403`、未知路径 | `features/error/`（壳层，非业务单据） |
+
+## 每个 feature 内
+
+```
+features/<route>/
+  <PageName>/          # 页面 UI
+  api/                 # 该模块接口（含 mock，接真接口只换这里）
+  hooks/               # 该模块 query / mutation
+  components/          # 仅本模块用的 UI
+  lib/                 # 纯函数（非 HTTP）
+  store/               # 仅本模块需要的 Zustand（跨页会话不要放这里）
+```
+
+## 不要按路由拆的
+
+| 落点 | 内容 |
+|------|------|
+| `src/api/` | 通用 HTTP：`http.ts`、`ApiError`、信封类型 |
+| `src/stores/` | 跨路由会话，如 `sessionStore` |
+| `src/components/` | 跨模块 UI（ListPage、ListSkeleton） |
+| `src/lib/` | queryClient、queryKeys、dayjs、appMessage |
+
+`queryKeys` 的顶层 key 与路由目录同名：`queryKeys.sales`、`queryKeys.dashboard`。
+
+## 禁止
+
+- 新建与路由无关的平行目录（例如页面在 `sales`、接口却放 `src/api/order.ts`）
+- 用 `auth` 目录承载 `/login`（目录名必须是 `login`）
+- 把登录会话拆进某个业务 feature 的 store
