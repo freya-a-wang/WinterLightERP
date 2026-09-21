@@ -1,5 +1,5 @@
 import { lazy } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import AuthGuard from '@/features/auth/components/AuthGuard'
 import LoginPage from '@/features/auth/LoginPage'
 import AdminLayout from '@/layouts/AdminLayout'
@@ -9,8 +9,10 @@ const SalesPage = lazy(() => import('@/features/sales/SalesPage'))
 const InventoryPage = lazy(() => import('@/features/inventory/InventoryPage'))
 const FinancePage = lazy(() => import('@/features/finance/FinancePage'))
 const SystemPage = lazy(() => import('@/features/system/SystemPage'))
+const ForbiddenPage = lazy(() => import('@/features/error/ForbiddenPage'))
+const NotFoundPage = lazy(() => import('@/features/error/NotFoundPage'))
 
-/** 应用路由：登录在守卫外，管理端路由需登录 */
+/** 应用路由：登录在守卫外，管理端路由需登录；未知路径展示 404 */
 export default function AppRouter(): React.JSX.Element {
   return (
     <Routes>
@@ -22,9 +24,10 @@ export default function AppRouter(): React.JSX.Element {
           <Route path="inventory" element={<InventoryPage />} />
           <Route path="finance" element={<FinancePage />} />
           <Route path="system" element={<SystemPage />} />
+          <Route path="403" element={<ForbiddenPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
