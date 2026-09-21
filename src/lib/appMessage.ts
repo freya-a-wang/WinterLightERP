@@ -1,24 +1,34 @@
-import { message } from 'antd'
 import { feedbackMessages } from './feedbackMessages'
 import { getErrorMessage } from './errorMessage'
 
-/** 全局 Message 展示参数 */
+/** 全局 Message 展示参数，交给 AntdApp 而不是静态 message.config */
 export const APP_MESSAGE_CONFIG = {
   duration: 2.5,
   maxCount: 3,
   top: 72
 } as const
 
-let configured = false
+type AppMessageApi = {
+  success: (content: string) => void
+  warning: (content: string) => void
+  info: (content: string) => void
+  error: (content: string) => void
+}
 
-/** 应用启动时调用一次，统一 Message 位置与堆叠策略 */
-export function initAppMessage(): void {
-  if (configured) {
-    return
-  }
+let messageApi: AppMessageApi | null = null
 
-  message.config(APP_MESSAGE_CONFIG)
-  configured = true
+/** 在 AntdApp 子树内绑定 useApp().message */
+export function bindAppMessage(api: AppMessageApi): void {
+  messageApi = api
+}
+
+/** 卸载时解除绑定，避免持有过期实例 */
+export function unbindAppMessage(): void {
+  messageApi = null
+}
+
+function getMessageApi(): AppMessageApi | null {
+  return messageApi
 }
 
 type AppMessageContent = string
@@ -30,15 +40,15 @@ function isNonEmptyString(value: unknown): value is string {
 /** 统一 antd Message 入口，错误类提示自动解析接口/异常信息 */
 export const appMessage = {
   success(content: AppMessageContent): void {
-    message.success(content)
+    getMessageApi()?.success(content)
   },
 
   warning(content: AppMessageContent): void {
-    message.warning(content)
+    getMessageApi()?.warning(content)
   },
 
   info(content: AppMessageContent): void {
-    message.info(content)
+    getMessageApi()?.info(content)
   },
 
   error(contentOrError: unknown, fallback: string = feedbackMessages.common.operationFailed): void {
@@ -46,6 +56,6 @@ export const appMessage = {
       ? contentOrError
       : getErrorMessage(contentOrError, fallback)
 
-    message.error(content)
+    getMessageApi()?.error(content)
   }
 }

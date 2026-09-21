@@ -2,16 +2,26 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { App as AntdApp, ConfigProvider } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
-import { useEffect, type PropsWithChildren } from 'react'
-import { initAppMessage } from '@/lib/appMessage'
+import { useLayoutEffect, type PropsWithChildren } from 'react'
+import { APP_MESSAGE_CONFIG, bindAppMessage, unbindAppMessage } from '@/lib/appMessage'
 import { queryClient } from '@/lib/queryClient'
+
+/** 把 AntdApp 上下文中的 message 交给 appMessage */
+function AppMessageBridge(): null {
+  const { message } = AntdApp.useApp()
+
+  useLayoutEffect(() => {
+    bindAppMessage(message)
+    return () => {
+      unbindAppMessage()
+    }
+  }, [message])
+
+  return null
+}
 
 /** 全局 Provider：Ant Design 中文主题、React Query、Message 初始化 */
 export function AppProviders({ children }: PropsWithChildren): React.JSX.Element {
-  useEffect(() => {
-    initAppMessage()
-  }, [])
-
   return (
     <ConfigProvider
       locale={zhCN}
@@ -29,7 +39,8 @@ export function AppProviders({ children }: PropsWithChildren): React.JSX.Element
         }
       }}
     >
-      <AntdApp>
+      <AntdApp message={APP_MESSAGE_CONFIG}>
+        <AppMessageBridge />
         <QueryClientProvider client={queryClient}>
           {children}
           {import.meta.env.DEV ? <ReactQueryDevtools initialIsOpen={false} /> : null}
