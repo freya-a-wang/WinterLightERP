@@ -1,0 +1,17 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.statCard,
+.tableCard {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.tableCard {
+  :global(.ant-card-head) {
+    border-bottom-color: var(--color-border);
+  }
+}

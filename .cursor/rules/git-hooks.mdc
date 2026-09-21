@@ -1,0 +1,69 @@
+---
+description: Husky Git hooks 与提交门禁（typecheck、commitlint）
+alwaysApply: false
+---
+
+# Git Hooks（Husky）
+
+项目使用 **Husky 9** 在本地 `git commit` 时自动校验，配置见 `.husky/` 与 `commitlint.config.js`。
+
+## 钩子一览
+
+| 钩子 | 命令 | 作用 |
+|------|------|------|
+| `pre-commit` | `pnpm run typecheck` | 全量 TypeScript 编译检查，阻止带类型错误的提交 |
+| `commit-msg` | `pnpm exec commitlint --edit` | 校验 Conventional Commits 头行（type 英文、subject 中文） |
+
+## 首次克隆 / 安装依赖
+
+`package.json` 的 `prepare` 脚本会在 `pnpm install` 后执行 `husky`，自动把 Git `core.hooksPath` 指向 `.husky/`。
+
+若 hook 未生效，手动执行：
+
+```bash
+pnpm run prepare
+```
+
+## 提交说明格式
+
+与 `wl-git-commit` Skill 一致：
+
+```
+<type>(<scope>): <中文简述>
+```
+
+示例：`feat(sales): 销售订单列表支持按客户筛选`
+
+细则见 `.cursor/skills/wl-git-commit/SKILL.md`；多步任务拆分提交见 `.cursor/rules/incremental-commits.mdc`。
+
+## 本地自测
+
+```bash
+pnpm run typecheck
+echo "feat(sales): 示例提交说明" | pnpm exec commitlint
+```
+
+## 跳过 hook（慎用）
+
+仅在用户**明确要求**或紧急热修且已知风险时使用：
+
+```bash
+git commit --no-verify -m "fix(sales): 紧急修复说明"
+```
+
+Agent **禁止**默认加 `--no-verify`；用户未明确要求时不得跳过 hook。
+
+## 相关文件
+
+| 文件 | 职责 |
+|------|------|
+| `.husky/pre-commit` | 提交前 typecheck |
+| `.husky/commit-msg` | 提交说明 commitlint |
+| `commitlint.config.js` | commitlint 规则（允许中文 subject） |
+| `package.json` → `prepare` | 安装后注册 husky |
+
+## 禁止
+
+- 为通过 hook 而删除或弱化 `typecheck` / commitlint 规则（应修代码或改说明）
+- 在 CI 之外假设 hook 已跑过而省略 `pnpm run typecheck`
+- 未经用户同意在文档或脚本中鼓励 `--no-verify`

@@ -1,0 +1,57 @@
+---
+description: TanStack React Query 服务端/异步数据约定
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# React Query — 异步数据与加载体验
+
+项目已安装 `@tanstack/react-query`，Provider 在 `AppProviders.tsx`。
+
+## 必须用 React Query 的场景
+
+- HTTP **读取**：`useQuery`（列表、详情、工作台汇总）
+- **写入**且需 loading/错误/重试：`useMutation`（建单、保存后刷新列表）
+- 多组件共享同一份远程数据：统一 `queryKey`，避免各自 `useState` + `useEffect` 拉取
+
+## 项目约定
+
+- `queryKey` 集中在 `src/lib/queryKeys.ts`，新增 key 写在这里。
+- 默认客户端：`src/lib/queryClient.ts`（`retry: 1`，`refetchOnWindowFocus: false`）。
+- 成功后刷新列表：`queryClient.invalidateQueries({ queryKey: queryKeys.xxx })`。
+
+## 体验要求
+
+- 查询中：页面级用 `isLoading` + `AppLoading`；局部用 `isFetching` 轻提示。
+- 列表查询首次加载：用 `isPending` + `ListSkeleton`，不要用 overlay Spin（见 `list-skeleton-ux.mdc`）。
+- 变更中：`mutation.isPending` 禁用确认按钮并显示「请稍后...」。
+- 错误：用 `appMessage.error(error, feedbackMessages.xxx)`；超时由 `getErrorMessage` 统一识别。
+
+## 示例
+
+```tsx
+export function useSalesOrderListQuery(keyword: string) {
+  return useQuery({
+    queryKey: [...queryKeys.salesOrders, keyword.trim()],
+    queryFn: () => fetchSalesOrders(keyword.trim())
+  })
+}
+
+const mutation = useMutation({
+  mutationFn: createSalesOrder,
+  onSuccess: () => {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.salesOrders })
+    appMessage.success(feedbackMessages.common.saveSuccess)
+  }
+})
+```
+
+## 不要用 useState 替代的情况
+
+```tsx
+// ❌ 避免：页面内手写拉取 + loading/error
+const [orders, setOrders] = useState([])
+useEffect(() => { void load() }, [])
+
+// ✅ 使用 useQuery +（可选）封装 hook
+```

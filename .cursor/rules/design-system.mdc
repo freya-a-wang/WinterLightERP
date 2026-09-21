@@ -1,0 +1,55 @@
+---
+description: Winter Light ERP 设计色系与 Loading 组件约定
+globs: src/**/*.{ts,tsx,less}
+alwaysApply: false
+---
+
+# 设计色系
+
+浅色后台 ERP，主色为冬日湖蓝。Token 定义在 `src/styles/tokens.less`。
+
+## 品牌色
+
+| 角色 | Token | Hex | 用途 |
+|------|-------|-----|------|
+| Primary | `--color-primary` | `#3D7EA6` | 主按钮、菜单选中、Loading |
+| Primary Muted | `--color-primary-muted` | `#2C6285` | 按下/深色变体 |
+| Primary Soft | `--color-primary-soft` | `#E8F1F6` | 浅底强调 |
+
+## 应用语义色
+
+| Token | 值 | 用途 |
+|-------|-----|------|
+| `--color-bg` | `#F3F6FA` | 页面根背景 |
+| `--color-surface` | `#FFFFFF` | 卡片、顶栏、侧栏 |
+| `--color-surface-muted` | `#E7EDF3` | 次要底、分割浅底 |
+| `--color-border` | `#D5DEE8` | 边框 |
+| `--color-text` | `#1B2430` | 标题、正文 |
+| `--color-text-secondary` | `#4A5568` | 次要正文 |
+| `--color-text-muted` | `#7A8799` | 占位、辅助说明 |
+
+## Loading 约定
+
+**禁止**在业务组件中直接 `import { Spin } from 'antd'`。
+
+### 列表 / 表格
+
+**首次加载**（`useQuery.isPending`、尚无列表数据）使用 **`ListSkeleton`**。细则见 `.cursor/rules/list-skeleton-ux.mdc`。
+
+已有列表数据的后台刷新：**保留旧列表**，不要用骨架或 Spin 盖住整表。
+
+### Spin（AppLoading）
+
+统一使用 `@/components` 的 `AppLoading`：
+
+| 场景 | 用法 |
+|------|------|
+| 路由懒加载全屏 | `<PageLoading />` |
+| 卡片/弹窗内联 | `<AppLoading variant="inline" tip="..." />` |
+| 按钮操作进行中 | 按钮 `disabled` + 文案，或局部 inline |
+
+## 禁止
+
+- 各处手写 `ant-spin` 颜色覆盖（集中到 `AppLoading`）
+- **列表加载**用 Spin/overlay 代替骨架屏
+- 硬编码与 token 冲突的主色（新代码优先 `var(--color-primary)`）

@@ -1,0 +1,35 @@
+---
+description: 渲染层数据分层总览（ahooks + React Query + Zustand）
+alwaysApply: true
+---
+
+# 数据与体验分层
+
+依赖见 `package.json`：`ahooks`、`@tanstack/react-query`、`zustand`、`antd`。
+
+实现功能时**按层选库**，以用户体验为先：
+
+1. **React Query** — 远程异步**读写的缓存与状态**（loading、error、重试、刷新）
+2. **Zustand** — **跨页面会话**与流程状态（当前登录用户、向导步骤）
+3. **ahooks** — **交互体验**（防抖搜索、稳定回调、弹窗开关、mount/unmount）
+4. **antd `appMessage` / `Modal` / `Spin`** — 用户可感知的反馈（Toast 禁止直接用 `antd message`）
+
+## 决策速查
+
+| 需求 | 用 |
+|------|-----|
+| 拉列表、详情、工作台汇总 | `useQuery` + `queryKeys` |
+| 列表首次加载占位 | `ListSkeleton`（见 `list-skeleton-ux.mdc`） |
+| 新建单据 / 保存 / 删除 | `useMutation` + 按钮 `isPending` |
+| 搜索框输入 | `useDebounceFn` |
+| 跨页当前用户 | `useSessionStore` |
+| 返回/提交回调 | `useMemoizedFn` |
+| 成功/失败 Toast | `appMessage` + `feedbackMessages` |
+
+## 禁止
+
+- 能用 Query 缓存的列表不要用 `useState` + 手动 `useEffect` 拉取
+- 能用 `useDebounceFn` 的搜索不要每次 `onChange` 打 API
+- 跨页状态不要只放组件 `useState` 或 prop drilling
+
+细则见：`.cursor/rules/ahooks-ux.mdc`、`react-query-data.mdc`、`zustand-state.mdc`、`list-skeleton-ux.mdc`。

@@ -1,0 +1,36 @@
+---
+description: Zustand 客户端会话与跨页状态约定
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Zustand — 跨页面/会话状态
+
+项目已安装 `zustand`。Store 放在 `src/stores/`。
+
+## 必须用 Zustand 的场景
+
+- **跨路由**仍需保留的状态（当前登录用户、未提交的跨页向导）
+- 多组件读写同一份 **UI 流程状态**
+- 从 React Query 同步后的 **会话快照**
+
+## 不要用 Zustand 的场景
+
+- 单次弹窗开关、表单草稿 → `useBoolean` / `Form`（ahooks + antd）
+- 远程列表/详情 → React Query
+- 仅单组件内部状态 → `useState`
+
+## 写法约定
+
+```tsx
+const currentUser = useSessionStore((s) => s.currentUser)
+const setCurrentUser = useSessionStore((s) => s.setCurrentUser)
+
+// 新建 store：create<State>((set) => ({ ... }))
+// 文件名：*Store.ts，导出 useXxxStore
+```
+
+## 体验要求
+
+- 细粒度订阅，避免整 store 重渲染。
+- 离开流程时调用 store 内 `reset*` 方法，避免脏数据影响下次操作。

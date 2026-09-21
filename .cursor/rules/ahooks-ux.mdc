@@ -1,0 +1,39 @@
+---
+description: ahooks 交互与体验约定（防抖、稳定回调、生命周期）
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# ahooks — 优先用于体验相关逻辑
+
+项目已安装 `ahooks`。涉及用户交互时，**优先用 ahooks，不要手写等价逻辑**。
+
+## 必须用 ahooks 的场景
+
+| 场景 | 使用 | 不要用 |
+|------|------|--------|
+| 搜索输入防抖 | `useDebounceFn` | 手写 `setTimeout` / `useEffect` 防抖 |
+| 传给子组件或依赖项的稳定回调 | `useMemoizedFn` | 裸 `useCallback` 包一层（除非极简） |
+| 页面首次加载副作用 | `useMount` | `useEffect(() => {}, [])` |
+| 组件卸载清理（与 mount 配对） | `useUnmount` | 仅在 unmount 分支里写清理 |
+| 弹窗/开关 UI 状态 | `useBoolean` | 两个 `useState` 互斥管理 |
+
+## 体验要求
+
+- 列表搜索：输入用 `useDebounceFn`（建议 300–500ms），按钮可立即触发。
+- 提交/跳转：用 `useMemoizedFn` 包装，避免重复触发；配合 `loading` / `isPending` 禁用按钮。
+- 异步入口：按钮显示进行中文案，并禁用并发操作。
+
+## 示例
+
+```tsx
+const loadOrders = useMemoizedFn(async (keyword: string) => { /* ... */ })
+const { run: debouncedSearch } = useDebounceFn((kw: string) => void loadOrders(kw), { wait: 400 })
+
+const [open, { setTrue: openDialog, setFalse: closeDialog }] = useBoolean(false)
+```
+
+## 边界
+
+- **服务端数据拉取/缓存**：用 React Query（见 `react-query-data.mdc`），不要用 ahooks 替代。
+- **跨页面会话状态**：用 Zustand（见 `zustand-state.mdc`）。

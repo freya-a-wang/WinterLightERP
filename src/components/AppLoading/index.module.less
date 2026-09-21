@@ -1,0 +1,43 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  :global(.ant-spin-dot-item) {
+    background-color: var(--color-primary);
+  }
+
+  :global(.ant-spin-description),
+  :global(.ant-spin-text) {
+    color: var(--color-text-muted);
+  }
+}
+
+.large {
+  :global(.ant-spin-dot) {
+    font-size: 40px;
+  }
+
+  :global(.ant-spin-description),
+  :global(.ant-spin-text) {
+    color: var(--color-text-secondary);
+    font-size: 16px;
+  }
+}
+
+.inline {
+  /* 仅占位 Spin 本体，由父级控制对齐 */
+}
+
+.overlay {
+  display: flex;
+  width: 100%;
+  min-height: 200px;
+}
+
+.fullscreen {
+  display: flex;
+  min-height: 100%;
+  width: 100%;
+  background: var(--color-bg);
+}

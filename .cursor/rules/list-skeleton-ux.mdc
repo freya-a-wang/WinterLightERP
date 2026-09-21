@@ -1,0 +1,41 @@
+---
+description: 列表类数据加载必须使用骨架屏，禁止 Spin 遮罩占位
+globs: src/**/*.{ts,tsx,less}
+alwaysApply: false
+---
+
+# 列表加载 — 骨架屏
+
+列表页**首次拉取**或**无缓存数据**时，用**骨架屏**占位，让用户感知「即将出现列表结构」，不要用全屏/区块 Spin 盖住列表区域。
+
+## 必须用骨架屏
+
+| 场景 | 用法 |
+|------|------|
+| `useQuery` 列表首次 `isPending` | `<ListSkeleton />` 或 feature 内专用骨架 |
+| 搜索/筛选换 key 且无旧数据 | 同上 |
+| 表格、卡片列表 | 布局贴近真实列表项 |
+
+## 仍用 AppLoading（Spin）的场景
+
+| 场景 | 用法 |
+|------|------|
+| 路由懒加载、整页 bootstrap | `PageLoading` / `AppLoading variant="fullscreen"` |
+| 按钮提交进行中 | 按钮 `disabled` + `isPending`，或局部 inline |
+| 弹窗内小块等待 | `AppLoading variant="inline"` |
+| 列表已有数据的后台刷新 | **保持旧列表**，不要用骨架闪一下 |
+
+## 项目约定
+
+- 共享组件：`@/components` 的 `ListSkeleton`
+  - `variant="tableRow"`：表格行（默认）
+  - `variant="avatarRow"`：头像 + 文案
+  - `variant="simpleRow"`：单行标题 + 副文案
+- 判断显示骨架：优先 `query.isPending`（无数据首次加载），**不要**在 `isFetching && data.length > 0` 时替换为骨架
+- 列表区域加 `role="status"`、`aria-busy`（`ListSkeleton` 已内置）
+
+## 禁止
+
+- 列表区用 `AppLoading variant="overlay"` 或裸 `Spin` 代替骨架
+- 有缓存列表时因 `isFetching` 整表换成骨架（会闪烁）
+- 每个 feature 复制一套骨架样式；应复用 `ListSkeleton` 或抽 feature 专用骨架组件

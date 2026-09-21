@@ -1,0 +1,62 @@
+---
+description: 按任务拆分少量多次提交，降低 LLM 幻觉与混改风险
+alwaysApply: true
+---
+
+# 增量提交（防幻觉）
+
+多步骤任务**优先拆成多个小 commit**，而不是一次提交整坨改动。便于 diff 评审、回滚定位，也迫使 Agent 每步只动相关文件，减少「顺手改别处」的幻觉。
+
+## 核心原则
+
+1. **一 commit 一意图**：每个提交只回答一个问题——「这一步单独完成了什么」
+2. **可独立回滚**：任意一次提交 revert 后，其余提交仍应 typecheck 通过、逻辑自洽
+3. **先拆后写**：大任务先在回复里列出 commit 切分，再按序实施与提交
+4. **提交前自检**：`git diff` 是否混入无关文件、无关重构、未请求的「优化」
+
+## 何时必须拆分
+
+| 场景 | 建议切分 |
+|------|------|
+| UI + API/数据层同次改动 | **分开**：先接口层或先页面，禁止混在一个 commit |
+| 新组件 + 替换多处引用 | 先 `feat: 新增 X`，再 `refactor: 各页改用 X` |
+| 规则/文档 + 业务代码 | 文档单独 `docs:` commit |
+| 多个独立 bugfix | 每个 bug 一个 `fix(scope):` |
+| Plan 多步骤已确认 | **每步一个 commit**，message 对应 Plan 条目 |
+| 重构 + 行为变更 | 先 `refactor`（行为不变），再 `fix`/`feat` |
+
+## 何时可合并为一个 commit
+
+- 单文件、单意图、行数很少（如改文案、修 typo）
+- 新增组件与其唯一调用点**强绑定**，拆开任一 commit 都无法通过 typecheck
+- 用户明确要求「合成一次提交」
+
+## Agent 工作流
+
+### 实施中
+
+- 完成**一个逻辑单元**（一个组件、一个 hook、一处规则文档）后暂停，核对 diff 范围
+- 发现 diff 超出当前单元 → **停止扩写**，先提交已完成部分，再开下一单元
+- **禁止**在「顺便」改稳定业务逻辑的同时混提 UI、日志、重构
+
+### 用户说「提交代码」时
+
+1. `git status` + `git diff`：若含**多个不相关意图**，先向用户说明拟拆成几条 commit，再**按序多次 commit**
+2. 每条 message 遵循 `wl-git-commit` Skill（type 英文、subject 中文）
+3. 每次 commit 后 `git status` 确认；pre-commit typecheck 失败则**修完再提交**，不 `--no-verify`
+
+## 禁止
+
+- 把 UI、接口层、文档、无关重构塞进**同一个** commit
+- 用户未要求时主动 `git push`
+- 用 `--no-verify` 绕过 typecheck 以「先提交再说」
+- 提交说明写「misc」「update」「各种修复」等无法对应 diff 的模糊 subject
+- 单次 commit 跨 3 个以上 scope 且无明确同一意图
+
+## 配套文档
+
+| 主题 | 路径 |
+|------|------|
+| 提交说明格式 | `.cursor/skills/wl-git-commit/SKILL.md` |
+| Husky / typecheck | `.cursor/rules/git-hooks.mdc` |
+| 核心业务先 Plan | `.cursor/skills/wl-plan-before-implement/SKILL.md` |
