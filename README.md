@@ -9,6 +9,8 @@ pnpm install
 pnpm dev
 ```
 
+开发时接口前缀默认是 `/api`，由 Vite 代理到 `VITE_DEV_PROXY_TARGET`（默认 `http://127.0.0.1:8080`）。可复制 `.env.example` 为 `.env.local` 覆盖本地配置。
+
 其它命令：
 
 ```bash
