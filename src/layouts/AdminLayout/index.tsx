@@ -1,10 +1,10 @@
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 import { Layout, Menu } from 'antd'
 import { useMemoizedFn } from 'ahooks'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import PageLoading from '@/components/PageLoading'
 import { useSessionStore } from '@/stores/sessionStore'
-import { adminMenuItems } from './menuItems'
+import { filterAdminMenuItems } from './menuItems'
 import styles from './index.module.less'
 
 const PAGE_TITLES: Record<string, string> = {
@@ -20,8 +20,10 @@ export default function AdminLayout(): React.JSX.Element {
   const location = useLocation()
   const navigate = useNavigate()
   const currentUser = useSessionStore((state) => state.currentUser)
+  const permissions = useSessionStore((state) => state.permissions)
   const selectedKey = location.pathname === '/' ? '/' : `/${location.pathname.split('/')[1]}`
   const pageTitle = PAGE_TITLES[selectedKey] ?? 'Winter Light ERP'
+  const menuItems = useMemo(() => filterAdminMenuItems(permissions), [permissions])
 
   const onMenuClick = useMemoizedFn(({ key }: { key: string }) => {
     if (key !== location.pathname) {
@@ -42,7 +44,7 @@ export default function AdminLayout(): React.JSX.Element {
         <Menu
           mode="inline"
           selectedKeys={[selectedKey]}
-          items={adminMenuItems}
+          items={menuItems}
           onClick={onMenuClick}
           className={styles.menu}
         />

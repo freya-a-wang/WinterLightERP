@@ -6,6 +6,15 @@ import {
   SettingOutlined
 } from '@ant-design/icons'
 import type { ItemType } from 'antd/es/menu/interface'
+import { permissionCodes } from '@/lib/permissions'
+
+const MENU_PERMISSIONS: Record<string, string> = {
+  '/': permissionCodes.dashboardView,
+  '/sales': permissionCodes.salesView,
+  '/inventory': permissionCodes.inventoryView,
+  '/finance': permissionCodes.financeView,
+  '/system': permissionCodes.systemView
+}
 
 /** 侧栏菜单：路径与页面路由一一对应 */
 export const adminMenuItems: ItemType[] = [
@@ -35,3 +44,15 @@ export const adminMenuItems: ItemType[] = [
     label: '系统'
   }
 ]
+
+/** 按当前用户权限码过滤侧栏，无权限的模块不展示 */
+export function filterAdminMenuItems(permissions: string[]): ItemType[] {
+  return adminMenuItems.filter((item) => {
+    if (!item || typeof item !== 'object' || !('key' in item) || typeof item.key !== 'string') {
+      return false
+    }
+
+    const required = MENU_PERMISSIONS[item.key]
+    return !required || permissions.includes(required)
+  })
+}
