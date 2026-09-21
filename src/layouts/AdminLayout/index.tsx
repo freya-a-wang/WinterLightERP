@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { Layout, Menu } from 'antd'
 import { useMemoizedFn } from 'ahooks'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import AppLoading from '@/components/AppLoading'
+import PageLoading from '@/components/PageLoading'
 import { useSessionStore } from '@/stores/sessionStore'
 import { adminMenuItems } from './menuItems'
 import styles from './index.module.less'
@@ -56,7 +56,7 @@ export default function AdminLayout(): React.JSX.Element {
           </div>
         </Layout.Header>
         <Layout.Content className={styles.content}>
-          <Suspense fallback={<AppLoading variant="overlay" size="large" tip="模块加载中" />}>
+          <Suspense fallback={<PageLoading tip="模块加载中" />}>
             <Outlet />
           </Suspense>
         </Layout.Content>
