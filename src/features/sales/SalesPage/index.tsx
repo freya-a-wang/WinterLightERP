@@ -1,11 +1,28 @@
-import PlaceholderPage from '@/components/PlaceholderPage'
+import { Button, Input, Table } from 'antd'
+import ListPage from '@/components/ListPage'
 
-/** 销售管理占位页 */
+const PLACEHOLDER_COLUMNS = [
+  { title: '单据号', dataIndex: 'id' },
+  { title: '客户', dataIndex: 'customer' },
+  { title: '金额', dataIndex: 'amount' },
+  { title: '状态', dataIndex: 'status' }
+]
+
+/** 销售订单占位：接入列表模板，暂无业务数据 */
 export default function SalesPage(): React.JSX.Element {
   return (
-    <PlaceholderPage
+    <ListPage
       title="销售订单"
-      description="销售报价、订单与出库流程将在此模块接入。当前为脚手架占位。"
-    />
+      extra={
+        <Button type="primary" disabled>
+          新建
+        </Button>
+      }
+      filters={<Input placeholder="搜索客户或单据号" disabled allowClear style={{ width: 240 }} />}
+      isEmpty
+      emptyDescription="业务接口接入后在此展示"
+    >
+      <Table rowKey="id" pagination={false} dataSource={[]} columns={PLACEHOLDER_COLUMNS} />
+    </ListPage>
   )
 }
