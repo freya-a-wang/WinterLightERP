@@ -62,7 +62,7 @@ export async function loginWithMock(payload: LoginPayload): Promise<LoginResult>
   )
 
   if (!account) {
-    throw new Error(feedbackMessages.auth.loginFailed)
+    throw new Error(feedbackMessages.login.loginFailed)
   }
 
   return {

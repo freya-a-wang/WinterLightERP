@@ -23,10 +23,10 @@ export default function LoginPage(): React.JSX.Element {
   const onFinish = useMemoizedFn(async (values: LoginFormValues) => {
     try {
       await loginMutation.mutateAsync(values)
-      appMessage.success(feedbackMessages.auth.loginSuccess)
+      appMessage.success(feedbackMessages.login.loginSuccess)
       void navigate(getSafeRedirectPath(searchParams.get('redirect')), { replace: true })
     } catch (error) {
-      appMessage.error(error, feedbackMessages.auth.loginFailed)
+      appMessage.error(error, feedbackMessages.login.loginFailed)
     }
   })
 

@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { useSessionStore } from '@/stores/sessionStore'
-import { loginWithMock } from '../lib/mockAuth'
+import { loginWithMock } from '../api/mockAuth'
 
 /** 登录：成功后写入会话（sessionStorage） */
 export function useLoginMutation() {

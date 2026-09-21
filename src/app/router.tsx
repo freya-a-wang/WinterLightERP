@@ -1,8 +1,8 @@
 import { lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import AuthGuard from '@/features/auth/components/AuthGuard'
-import PermissionGuard from '@/features/auth/components/PermissionGuard'
-import LoginPage from '@/features/auth/LoginPage'
+import AuthGuard from '@/features/login/components/AuthGuard'
+import PermissionGuard from '@/features/login/components/PermissionGuard'
+import LoginPage from '@/features/login/LoginPage'
 import AdminLayout from '@/layouts/AdminLayout'
 import { permissionCodes } from '@/lib/permissions'
 

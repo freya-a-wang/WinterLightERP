@@ -8,7 +8,7 @@ export const feedbackMessages = {
     saveSuccess: '保存成功',
     deleteSuccess: '删除成功'
   },
-  auth: {
+  login: {
     loginSuccess: '登录成功',
     loginFailed: '登录失败，请检查账号或密码',
     sessionExpired: '登录状态已失效，请重新登录'

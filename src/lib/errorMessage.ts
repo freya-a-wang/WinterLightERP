@@ -3,7 +3,7 @@ import { feedbackMessages } from './feedbackMessages'
 
 const HTTP_STATUS_MESSAGES: Record<number, string> = {
   400: '请求参数有误，请检查后重试',
-  401: '登录状态已失效，请重新登录',
+  401: feedbackMessages.login.sessionExpired,
   403: '暂无权限执行此操作',
   404: '请求的资源不存在',
   408: feedbackMessages.common.networkTimeout,

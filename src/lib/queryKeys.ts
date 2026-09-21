@@ -1,9 +1,10 @@
-/** React Query 缓存键，按资源域划分 */
+/** React Query 缓存键，顶层与路由目录同名 */
 export const queryKeys = {
   session: ['session'] as const,
-  dashboardSummary: ['dashboard-summary'] as const,
-  salesOrders: ['sales-orders'] as const,
-  inventoryList: ['inventory-list'] as const,
-  purchaseOrders: ['purchase-orders'] as const,
-  financeSummary: ['finance-summary'] as const
+  dashboard: ['dashboard'] as const,
+  sales: ['sales'] as const,
+  inventory: ['inventory'] as const,
+  finance: ['finance'] as const,
+  system: ['system'] as const,
+  login: ['login'] as const
 } as const
