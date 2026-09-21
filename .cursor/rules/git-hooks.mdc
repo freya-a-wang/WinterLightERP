@@ -1,5 +1,5 @@
 ---
-description: Husky Git hooks 与提交门禁（typecheck、commitlint）
+description: Husky Git hooks 与提交门禁（分支名、typecheck、commitlint）
 alwaysApply: false
 ---
 
@@ -11,7 +11,7 @@ alwaysApply: false
 
 | 钩子 | 命令 | 作用 |
 |------|------|------|
-| `pre-commit` | `pnpm run typecheck` | 全量 TypeScript 编译检查，阻止带类型错误的提交 |
+| `pre-commit` | `pnpm run check:branch` + `pnpm run typecheck` | 校验分支名（`<type>/<描述>`）与 TypeScript |
 | `commit-msg` | `pnpm exec commitlint --edit` | 校验 Conventional Commits 头行（type 英文、subject 中文） |
 
 ## 首次克隆 / 安装依赖
@@ -34,11 +34,12 @@ pnpm run prepare
 
 示例：`feat(sales): 销售订单列表支持按客户筛选`
 
-细则见 `.cursor/skills/wl-git-commit/SKILL.md`；多步任务拆分提交见 `.cursor/rules/incremental-commits.mdc`。
+细则见 `.cursor/skills/wl-git-commit/SKILL.md`；分支命名见 `.cursor/rules/git-branch-naming.mdc`；多步任务拆分提交见 `.cursor/rules/incremental-commits.mdc`。
 
 ## 本地自测
 
 ```bash
+pnpm run check:branch
 pnpm run typecheck
 echo "feat(sales): 示例提交说明" | pnpm exec commitlint
 ```
@@ -57,8 +58,9 @@ Agent **禁止**默认加 `--no-verify`；用户未明确要求时不得跳过 h
 
 | 文件 | 职责 |
 |------|------|
-| `.husky/pre-commit` | 提交前 typecheck |
+| `.husky/pre-commit` | 提交前校验分支名 + typecheck |
 | `.husky/commit-msg` | 提交说明 commitlint |
+| `scripts/check-branch-name.mjs` | 分支名 `<type>/<描述>` |
 | `commitlint.config.js` | commitlint 规则（允许中文 subject） |
 | `package.json` → `prepare` | 安装后注册 husky |
 

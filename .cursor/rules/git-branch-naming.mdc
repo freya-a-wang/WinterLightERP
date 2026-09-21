@@ -1,0 +1,30 @@
+---
+description: Git 分支必须使用 <type>/<描述> 命名（feature/fix/hotfix 等）；创建分支或提交前遵守
+alwaysApply: true
+---
+
+# 分支命名
+
+格式：`<type>/<描述>`。
+
+`<描述>` 为小写英文、数字，单词间用 `-`（可用 `_` 或 `.`），禁止空格与大写。
+
+| type | 用途 |
+|------|------|
+| `feature` / `feat` | 新功能 |
+| `fix` / `bugfix` | 缺陷修复 |
+| `hotfix` | 生产紧急修复 |
+| `release` | 发版准备 |
+| `docs` / `chore` / `refactor` / `perf` / `test` / `ci` / `build` / `style` | 与 commit type 对应 |
+
+长期 / 环境分支无需前缀：`main` / `master` / `test`。
+
+| 合法 | 不合法 |
+|------|--------|
+| `feature/shop-home`、`feat/shop-home` | `freya`、`shop-home` |
+| `fix/tab-bar`、`hotfix/login-crash` | `Fix/tab-bar`、`fix/库存` |
+| `main`、`test` | `feature/`（缺描述） |
+
+开新任务时：`git checkout -b feature/sales-order-list`。禁止用无前缀短名当个人开发分支。
+
+细则与校验脚本见 `.cursor/skills/wl-git-commit/SKILL.md`。

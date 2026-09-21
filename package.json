@@ -10,6 +10,7 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false --noEmit",
     "lint": "oxlint",
+    "check:branch": "node scripts/check-branch-name.mjs",
     "preview": "vite preview",
     "prepare": "husky",
     "commitlint": "commitlint --edit"

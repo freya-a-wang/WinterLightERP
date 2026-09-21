@@ -1,9 +1,9 @@
 ---
 name: wl-git-commit
 description: >-
-  Winter Light ERP 仓库 Git 提交与 PR 说明规范：Conventional Commits 类型前缀
-  保留英文，subject 与 body 一律中文。在用户要求提交代码、写 commit message、
-  创建 PR、或提到 feat/fix/docs 提交说明时使用。
+  Winter Light ERP 仓库 Git 提交、分支命名与 PR 说明规范：分支为 <type>/<描述>，
+  commit 的 type 英文、subject 中文。在用户要求提交代码、创建分支、写 commit
+  message、创建 PR、或提到 feat/fix/docs 时使用。
 ---
 
 # Winter Light Git 提交说明规范
@@ -11,6 +11,7 @@ description: >-
 ## 何时使用
 
 - 用户要求 `git commit`、提交代码、写提交说明
+- 创建或重命名 Git 分支
 - 创建 Pull Request 的标题与正文
 - 评审或改写不符合规范的 commit message
 
@@ -85,18 +86,32 @@ docs: 补充 Git 提交规范与 Husky 门禁
 
 ---
 
+## 分支命名
+
+格式为 `<type>/<描述>`（小写英文/数字，单词间用 `-`）。细则见 `.cursor/rules/git-branch-naming.mdc`。
+
+```bash
+git checkout -b feature/sales-order-list
+git checkout -b fix/login-redirect
+```
+
+常用 type：`feature` / `feat`、`fix` / `bugfix`、`hotfix`、`release`，以及 `docs`、`chore`、`refactor`、`perf`、`test`、`ci`、`build`、`style`。
+
+长期 / 环境分支 `main` / `master` / `test` 无需前缀。`freya`、无前缀短名、中文描述等均不合法。
+
 ## Husky 自动门禁
 
 `pnpm install` 后 Husky 会注册 Git hooks（见 `.cursor/rules/git-hooks.mdc`）：
 
 | 阶段 | 检查 |
 |------|------|
-| `pre-commit` | `pnpm run typecheck` |
+| `pre-commit` | `pnpm run check:branch` + `pnpm run typecheck` |
 | `commit-msg` | commitlint（`commitlint.config.js`，允许中文 subject） |
 
 本地可先自测：
 
 ```bash
+pnpm run check:branch
 pnpm run typecheck
 echo "feat(sales): 示例说明" | pnpm exec commitlint
 ```

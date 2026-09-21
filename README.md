@@ -49,9 +49,11 @@ src/
 
 提交说明：**type 英文、subject 中文**，例如 `feat(sales): 销售订单列表支持按客户筛选`。
 
+任务分支：**`<type>/<描述>`**，例如 `feature/sales-order-list`。长期 / 环境分支 `main`、`test` 无需前缀。
+
 `pnpm install` 后会通过 Husky 注册：
 
-- `pre-commit`：`pnpm run typecheck`
+- `pre-commit`：`pnpm run check:branch` + `pnpm run typecheck`
 - `commit-msg`：commitlint
 
 细则见 `.cursor/rules/` 与 `.cursor/skills/`。

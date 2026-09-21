@@ -1,1 +1,2 @@
+pnpm run check:branch
 pnpm run typecheck

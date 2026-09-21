@@ -58,5 +58,6 @@ alwaysApply: true
 | 主题 | 路径 |
 |------|------|
 | 提交说明格式 | `.cursor/skills/wl-git-commit/SKILL.md` |
+| 分支命名 | `.cursor/rules/git-branch-naming.mdc` |
 | Husky / typecheck | `.cursor/rules/git-hooks.mdc` |
 | 核心业务先 Plan | `.cursor/skills/wl-plan-before-implement/SKILL.md` |
