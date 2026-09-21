@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:test": "tsc -b && vite build --mode test",
     "typecheck": "tsc -b --pretty false --noEmit",
     "lint": "oxlint",
     "check:branch": "node scripts/check-branch-name.mjs",
